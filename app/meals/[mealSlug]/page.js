@@ -1,11 +1,33 @@
+import classes from "./page.module.css"
+import Image from "next/image";
+import {getMeal} from "@/lib/meals";
+import {notFound} from "next/navigation";
 
+  function Page({params}) {
 
-function Page({params}) {
-    const {mealSlug} = params
+    const meal =  getMeal(params.mealSlug)
 
+      if (!meal) {
+          notFound();
+      }
+
+    meal.instructions = meal.instructions.replace(/\n/g, `<br />`)
     return (
-        <><h1>MealDetails</h1>
-        <p>{mealSlug}</p></>
+        <>
+           <header className={classes.header}>
+               <div className={classes.image}>
+                <Image src={`https://myawsbucket-nextjscourse.s3.amazonaws.com/${meal.image}`} alt={meal.title} fill />
+               </div>
+               <div className={classes.headerText}>
+                   <h1>{meal.title}</h1>
+                   <p className={classes.creator_email}>by <a href={`mailto:${"EMAIL"}`}>{meal.creator}</a></p>
+                   <p className={classes.summary}>{meal.summary}</p>
+               </div>
+           </header>
+            <main>
+                <p className={classes.instructions} dangerouslySetInnerHTML={{__html: meal.instructions}}></p>
+            </main>
+        </>
     );
 }
 
